@@ -102,6 +102,9 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
     object.resize(size_t(readInt()));
     for(auto& mesh : object)
     {
+      mesh.geometry.triangleFan   = triangleFan;
+      mesh.geometry.triangleStrip = triangleStrip;
+      mesh.geometry.triangles     = triangles;
       mesh.geometry.comments.resize(size_t(readInt()));
       for(auto& comment : mesh.geometry.comments)
         comment = readString();
