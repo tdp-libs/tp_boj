@@ -5,6 +5,8 @@
 #include "tp_utils/FileUtils.h"
 #include "tp_utils/DebugUtils.h"
 
+#include <stdexcept>
+
 namespace tp_boj
 {
 
@@ -56,7 +58,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
   auto readInt = [&]()
   {
     if((pMax-p) < 4)
-      throw;
+      throw std::logic_error("BOJ readInt buffer overflow.");
 
     uint32_t n;
     memcpy(&n, p, 4);
@@ -67,7 +69,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
   auto readFloat = [&]()
   {
     if((pMax-p) < 4)
-      throw;
+      throw std::logic_error("BOJ readFloat buffer overflow.");
 
     float n;
     memcpy(&n, p, 4);
@@ -78,7 +80,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
   auto readString = [&]()
   {
     if((pMax-p) < 4)
-      throw;
+      throw std::logic_error("BOJ readString buffer overflow.");
 
     uint32_t n;
     memcpy(&n, p, 4);
@@ -88,7 +90,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
     str.resize(n);
 
     if((pMax-p) < n)
-      throw;
+      throw std::logic_error("BOJ readString buffer overflow.");
 
     memcpy(str.data(), p, n);
     p+=n;
