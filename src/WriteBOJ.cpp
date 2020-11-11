@@ -60,6 +60,7 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
+    addInt(uint32_t(0)-1); // Version 1
     addInt(object.size());
     for(const auto& mesh : object)
     {
@@ -126,6 +127,10 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
 
       addFloat(mesh.material.shininess);
       addFloat(mesh.material.alpha);
+
+      addFloat(mesh.material.ambientScale);
+      addFloat(mesh.material.diffuseScale);
+      addFloat(mesh.material.specularScale);
 
       addString(cleanTextureName(mesh.material. ambientTexture));
       addString(cleanTextureName(mesh.material. diffuseTexture));

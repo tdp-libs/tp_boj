@@ -100,8 +100,16 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
 
   try
   {
+    uint32_t objCount = readInt();
+    int version=0;
+    if(objCount == (uint32_t(0)-1))
+    {
+      version = 1;
+      objCount = readInt();
+    }
+
     std::vector<tp_maps::Geometry3D> object;
-    object.resize(size_t(readInt()));
+    object.resize(size_t(objCount));
     for(auto& mesh : object)
     {
       mesh.geometry.triangleFan   = triangleFan;
@@ -170,6 +178,13 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
 
       mesh.material.shininess = readFloat();
       mesh.material.alpha = readFloat();
+
+      if(version>0)
+      {
+        mesh.material.ambientScale = readFloat();
+        mesh.material.diffuseScale = readFloat();
+        mesh.material.specularScale = readFloat();
+      }
 
       mesh.material.ambientTexture  = readString();
       mesh.material.diffuseTexture  = readString();
