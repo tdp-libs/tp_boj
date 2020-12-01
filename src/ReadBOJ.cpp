@@ -112,6 +112,11 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
       version = 2;
       objCount = readInt();
     }
+    if(objCount == (uint32_t(0)-3))
+    {
+      version = 3;
+      objCount = readInt();
+    }
 
     std::vector<tp_maps::Geometry3D> object;
     object.resize(size_t(objCount));
@@ -183,6 +188,19 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
 
       mesh.material.shininess = readFloat();
       mesh.material.alpha = readFloat();
+
+      if(version>2)
+      {
+        mesh.material.roughness      = readFloat();
+        mesh.material.metalness      = readFloat();
+
+        mesh.material.useDiffuse     = readFloat();
+        mesh.material.useNdotL       = readFloat();
+        mesh.material.useAttenuation = readFloat();
+        mesh.material.useShadow      = readFloat();
+        mesh.material.useLightMask   = readFloat();
+        mesh.material.useReflection  = readFloat();
+      }
 
       if(version>0)
       {
