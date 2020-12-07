@@ -36,11 +36,13 @@ std::vector<tp_maps::Geometry3D> readObjectAndTexturesFromFile(const std::string
       texturePaths[name] = directory + name.keyString() + ".png";
     };
 
-    addTexture(mesh.material. ambientTexture); //!< mtl: map_Ka
-    addTexture(mesh.material. diffuseTexture); //!< mtl: map_Kd
-    addTexture(mesh.material.specularTexture); //!< mtl: map_Ks
-    addTexture(mesh.material.   alphaTexture); //!< mtl: map_d
-    addTexture(mesh.material.    bumpTexture); //!< mtl: map_Bump
+    addTexture(mesh.material.   albedoTexture);  //!< mtl: map_Kd or map_Ka
+    addTexture(mesh.material. specularTexture);  //!< mtl: map_Ks
+    addTexture(mesh.material.    alphaTexture);  //!< mtl: map_d
+    addTexture(mesh.material.  normalsTexture);  //!< mtl: map_Bump
+    addTexture(mesh.material.roughnessTexture);  //!<
+    addTexture(mesh.material.metalnessTexture);  //!<
+    addTexture(mesh.material.       aoTexture);  //!<
   }
 
   return geometry;
@@ -174,19 +176,24 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
 
       mesh.material.name = readString();
 
-      mesh.material.ambient.x = readFloat();
-      mesh.material.ambient.y = readFloat();
-      mesh.material.ambient.z = readFloat();
+      mesh.material.albedo.x = readFloat();
+      mesh.material.albedo.y = readFloat();
+      mesh.material.albedo.z = readFloat();
 
-      mesh.material.diffuse.x = readFloat();
-      mesh.material.diffuse.y = readFloat();
-      mesh.material.diffuse.z = readFloat();
+      if(version<3)
+      {
+        mesh.material.albedo.x = readFloat();
+        mesh.material.albedo.y = readFloat();
+        mesh.material.albedo.z = readFloat();
+      }
 
       mesh.material.specular.x = readFloat();
       mesh.material.specular.y = readFloat();
       mesh.material.specular.z = readFloat();
 
-      mesh.material.shininess = readFloat();
+      if(version<3)
+        readFloat();
+
       mesh.material.alpha = readFloat();
 
       if(version>2)
@@ -194,6 +201,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
         mesh.material.roughness      = readFloat();
         mesh.material.metalness      = readFloat();
 
+        mesh.material.useAmbient     = readFloat();
         mesh.material.useDiffuse     = readFloat();
         mesh.material.useNdotL       = readFloat();
         mesh.material.useAttenuation = readFloat();
@@ -204,8 +212,10 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
 
       if(version>0)
       {
-        mesh.material.ambientScale = readFloat();
-        mesh.material.diffuseScale = readFloat();
+        if(version<3)
+          readFloat();
+
+        mesh.material.albedoScale   = readFloat();
         mesh.material.specularScale = readFloat();
       }
 
@@ -214,11 +224,21 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
         mesh.material.tileTextures = readInt();
       }
 
-      mesh.material.ambientTexture  = readString();
-      mesh.material.diffuseTexture  = readString();
+
+      if(version<3)
+        readString();
+
+      mesh.material.albedoTexture  = readString();
       mesh.material.specularTexture = readString();
       mesh.material.alphaTexture    = readString();
-      mesh.material.bumpTexture     = readString();
+      mesh.material.normalsTexture  = readString();
+
+      if(version>2)
+      {
+        mesh.material.roughnessTexture = readString();
+        mesh.material.metalnessTexture = readString();
+        mesh.material.aoTexture        = readString();
+      }
     }
 
     return object;

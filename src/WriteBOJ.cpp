@@ -113,24 +113,20 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
 
       addString(mesh.material.name.keyString());
 
-      addFloat(mesh.material.ambient.x);
-      addFloat(mesh.material.ambient.y);
-      addFloat(mesh.material.ambient.z);
-
-      addFloat(mesh.material.diffuse.x);
-      addFloat(mesh.material.diffuse.y);
-      addFloat(mesh.material.diffuse.z);
+      addFloat(mesh.material.albedo.x);
+      addFloat(mesh.material.albedo.y);
+      addFloat(mesh.material.albedo.z);
 
       addFloat(mesh.material.specular.x);
       addFloat(mesh.material.specular.y);
       addFloat(mesh.material.specular.z);
 
-      addFloat(mesh.material.shininess);
       addFloat(mesh.material.alpha);
 
       addFloat(mesh.material.roughness);
       addFloat(mesh.material.metalness);
 
+      addFloat(mesh.material.useAmbient);
       addFloat(mesh.material.useDiffuse);
       addFloat(mesh.material.useNdotL);
       addFloat(mesh.material.useAttenuation);
@@ -138,17 +134,18 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
       addFloat(mesh.material.useLightMask);
       addFloat(mesh.material.useReflection);
 
-      addFloat(mesh.material.ambientScale);
-      addFloat(mesh.material.diffuseScale);
+      addFloat(mesh.material.albedoScale);
       addFloat(mesh.material.specularScale);
 
       addInt(mesh.material.tileTextures?1:0);
 
-      addString(cleanTextureName(mesh.material. ambientTexture));
-      addString(cleanTextureName(mesh.material. diffuseTexture));
-      addString(cleanTextureName(mesh.material.specularTexture));
-      addString(cleanTextureName(mesh.material.   alphaTexture));
-      addString(cleanTextureName(mesh.material.    bumpTexture));
+      addString(cleanTextureName(mesh.material.albedoTexture   ));
+      addString(cleanTextureName(mesh.material.specularTexture ));
+      addString(cleanTextureName(mesh.material.alphaTexture    ));
+      addString(cleanTextureName(mesh.material.normalsTexture  ));
+      addString(cleanTextureName(mesh.material.roughnessTexture));
+      addString(cleanTextureName(mesh.material.metalnessTexture));
+      addString(cleanTextureName(mesh.material.aoTexture       ));
     }
   };
 
@@ -203,11 +200,13 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
   std::unordered_set<tp_utils::StringID> textures;
   for(const auto& mesh : object)
   {
-    textures.insert(mesh.material. ambientTexture); //!< mtl: map_Ka
-    textures.insert(mesh.material. diffuseTexture); //!< mtl: map_Kd
-    textures.insert(mesh.material.specularTexture); //!< mtl: map_Ks
-    textures.insert(mesh.material.   alphaTexture); //!< mtl: map_d
-    textures.insert(mesh.material.    bumpTexture); //!< mtl: map_Bump
+    textures.insert(mesh.material. albedoTexture   );
+    textures.insert(mesh.material. specularTexture );
+    textures.insert(mesh.material. alphaTexture    );
+    textures.insert(mesh.material. normalsTexture  );
+    textures.insert(mesh.material. roughnessTexture);
+    textures.insert(mesh.material. metalnessTexture);
+    textures.insert(mesh.material. aoTexture       );
   }
 
   for(const auto& texture : textures)
