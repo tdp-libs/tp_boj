@@ -2,6 +2,7 @@
 
 #include "tp_utils/FileUtils.h"
 
+#include <cctype>
 
 namespace tp_boj
 {
@@ -12,7 +13,7 @@ std::string cleanTextureName(const tp_utils::StringID& name)
   std::string r = name.keyString();
 
   for(size_t i=0; i<r.size(); i++)
-    r[i] = std::tolower(r[i]);
+    r[i] = char(std::tolower(r[i]));
 
   auto getBack = [&](char del)
   {
@@ -61,14 +62,14 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
     addInt(uint32_t(0)-3); // Version 3
-    addInt(object.size());
+    addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
-      addInt(mesh.geometry.comments.size());
+      addInt(uint32_t(mesh.geometry.comments.size()));
       for(const auto& comment : mesh.geometry.comments)
         addString(comment);
 
-      addInt(mesh.geometry.verts.size());
+      addInt(uint32_t(mesh.geometry.verts.size()));
       for(const auto& vert : mesh.geometry.verts)
       {
         addFloat(vert.vert.x);
@@ -96,7 +97,7 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
         addFloat(vert.bitangent.z);
       }
 
-      addInt(mesh.geometry.indexes.size());
+      addInt(uint32_t(mesh.geometry.indexes.size()));
       for(const auto& index : mesh.geometry.indexes)
       {
         if(index.type == mesh.geometry.triangleFan)
@@ -106,7 +107,7 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
         else
           addInt(3);
 
-        addInt(index.indexes.size());
+        addInt(uint32_t(index.indexes.size()));
         for(int i : index.indexes)
           addInt(uint32_t(i));
       }
@@ -187,7 +188,7 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
 
     auto addString = [&](const std::string& s)
     {
-      uint32_t n = s.size();
+      uint32_t n = uint32_t(s.size());
       memcpy(data, &n, 4);
       data+=4;
 
