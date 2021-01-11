@@ -50,7 +50,8 @@ void writeObjectAndTexturesToFile(const std::vector<tp_maps::Geometry3D>& object
 
   std::string objectData = serializeObject(object, [&](const tp_utils::StringID& name)
   {
-    saveTexture(name, directory + cleanTextureName(name) + ".png");
+    if(name.isValid())
+      saveTexture(name, directory + cleanTextureName(name) + ".png");
   });
   tp_utils::writeBinaryFile(filePath, objectData);
 }
@@ -211,7 +212,8 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
   }
 
   for(const auto& texture : textures)
-    saveTexture(texture);
+    if(texture.isValid())
+      saveTexture(texture);
 
   return result;
 }
