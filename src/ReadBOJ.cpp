@@ -12,17 +12,11 @@ namespace tp_boj
 
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
-                                                               std::unordered_map<tp_utils::StringID, std::string>& texturePaths,
-                                                               int triangleFan,
-                                                               int triangleStrip,
-                                                               int triangles)
+                                                                     std::unordered_map<tp_utils::StringID, std::string>& texturePaths)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
-  std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath),
-                                                                triangleFan,
-                                                                triangleStrip,
-                                                                triangles);
+  std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath));
   for(const auto& mesh : geometry)
   {
     auto addTexture = [&](const tp_utils::StringID& name)
@@ -49,10 +43,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 }
 
 //##################################################################################################
-std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data,
-                                                   int triangleFan,
-                                                   int triangleStrip,
-                                                   int triangles)
+std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
   auto p = data.data();
   auto pMax = p + data.size();
@@ -124,9 +115,6 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
     object.resize(size_t(objCount));
     for(auto& mesh : object)
     {
-      mesh.triangleFan   = triangleFan;
-      mesh.triangleStrip = triangleStrip;
-      mesh.triangles     = triangles;
       mesh.comments.resize(size_t(readInt()));
       for(auto& comment : mesh.comments)
         comment = readString();
@@ -164,9 +152,9 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
       {
         switch(readInt())
         {
-        case 1:  index.type = triangleFan;   break;
-        case 2:  index.type = triangleStrip; break;
-        default: index.type = triangles;     break;
+        case 1:  index.type = mesh.triangleFan;   break;
+        case 2:  index.type = mesh.triangleStrip; break;
+        default: index.type = mesh.triangles;     break;
         }
 
         index.indexes.resize(size_t(readInt()));

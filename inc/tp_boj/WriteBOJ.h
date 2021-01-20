@@ -2,7 +2,7 @@
 #define tp_boj_WriteBOJ_h
 
 #include "tp_boj/Globals.h"
-#include "tp_maps/layers/Geometry3DLayer.h"
+#include "tp_math_utils/Geometry3D.h"
 
 #include <iosfwd>
 

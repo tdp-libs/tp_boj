@@ -2,7 +2,7 @@
 #define tp_boj_ReadBOJ_h
 
 #include "tp_boj/Globals.h"
-#include "tp_maps/layers/Geometry3DLayer.h"
+#include "tp_math_utils/Geometry3D.h"
 
 #include <iosfwd>
 
@@ -11,16 +11,10 @@ namespace tp_boj
 
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
-                                                               std::unordered_map<tp_utils::StringID, std::string>& texturePaths,
-                                                               int triangleFan,
-                                                               int triangleStrip,
-                                                               int triangles);
+                                                                     std::unordered_map<tp_utils::StringID, std::string>& texturePaths);
 
 //##################################################################################################
-std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data,
-                                                   int triangleFan,
-                                                   int triangleStrip,
-                                                   int triangles);
+std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data);
 }
 
 #endif
