@@ -11,7 +11,7 @@ namespace tp_boj
 {
 
 //##################################################################################################
-std::vector<tp_maps::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
+std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
                                                                std::unordered_map<tp_utils::StringID, std::string>& texturePaths,
                                                                int triangleFan,
                                                                int triangleStrip,
@@ -19,7 +19,7 @@ std::vector<tp_maps::Geometry3D> readObjectAndTexturesFromFile(const std::string
 {
   std::string directory = getAssociatedFilePath(filePath);
 
-  std::vector<tp_maps::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath),
+  std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath),
                                                                 triangleFan,
                                                                 triangleStrip,
                                                                 triangles);
@@ -49,7 +49,7 @@ std::vector<tp_maps::Geometry3D> readObjectAndTexturesFromFile(const std::string
 }
 
 //##################################################################################################
-std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
+std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data,
                                                    int triangleFan,
                                                    int triangleStrip,
                                                    int triangles)
@@ -120,19 +120,19 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
       objCount = readInt();
     }
 
-    std::vector<tp_maps::Geometry3D> object;
+    std::vector<tp_math_utils::Geometry3D> object;
     object.resize(size_t(objCount));
     for(auto& mesh : object)
     {
-      mesh.geometry.triangleFan   = triangleFan;
-      mesh.geometry.triangleStrip = triangleStrip;
-      mesh.geometry.triangles     = triangles;
-      mesh.geometry.comments.resize(size_t(readInt()));
-      for(auto& comment : mesh.geometry.comments)
+      mesh.triangleFan   = triangleFan;
+      mesh.triangleStrip = triangleStrip;
+      mesh.triangles     = triangles;
+      mesh.comments.resize(size_t(readInt()));
+      for(auto& comment : mesh.comments)
         comment = readString();
 
-      mesh.geometry.verts.resize(size_t(readInt()));
-      for(auto& vert : mesh.geometry.verts)
+      mesh.verts.resize(size_t(readInt()));
+      for(auto& vert : mesh.verts)
       {
         vert.vert.x = readFloat();
         vert.vert.y = readFloat();
@@ -159,8 +159,8 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
         vert.bitangent.z = readFloat();
       }
 
-      mesh.geometry.indexes.resize(size_t(readInt()));
-      for(auto& index : mesh.geometry.indexes)
+      mesh.indexes.resize(size_t(readInt()));
+      for(auto& index : mesh.indexes)
       {
         switch(readInt())
         {
@@ -246,7 +246,7 @@ std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
   catch(...)
   {
     tpWarning() << "Failed to deserialize model.";
-    return std::vector<tp_maps::Geometry3D>();
+    return std::vector<tp_math_utils::Geometry3D>();
   }
 }
 

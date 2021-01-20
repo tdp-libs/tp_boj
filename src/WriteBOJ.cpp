@@ -42,7 +42,7 @@ std::string cleanTextureName(const tp_utils::StringID& name)
 }
 
 //##################################################################################################
-void writeObjectAndTexturesToFile(const std::vector<tp_maps::Geometry3D>& object,
+void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture)
 {
@@ -57,7 +57,7 @@ void writeObjectAndTexturesToFile(const std::vector<tp_maps::Geometry3D>& object
 }
 
 //##################################################################################################
-std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
+std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
                             const std::function<void(const tp_utils::StringID&)>& saveTexture)
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
@@ -66,12 +66,12 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
-      addInt(uint32_t(mesh.geometry.comments.size()));
-      for(const auto& comment : mesh.geometry.comments)
+      addInt(uint32_t(mesh.comments.size()));
+      for(const auto& comment : mesh.comments)
         addString(comment);
 
-      addInt(uint32_t(mesh.geometry.verts.size()));
-      for(const auto& vert : mesh.geometry.verts)
+      addInt(uint32_t(mesh.verts.size()));
+      for(const auto& vert : mesh.verts)
       {
         addFloat(vert.vert.x);
         addFloat(vert.vert.y);
@@ -98,12 +98,12 @@ std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
         addFloat(vert.bitangent.z);
       }
 
-      addInt(uint32_t(mesh.geometry.indexes.size()));
-      for(const auto& index : mesh.geometry.indexes)
+      addInt(uint32_t(mesh.indexes.size()));
+      for(const auto& index : mesh.indexes)
       {
-        if(index.type == mesh.geometry.triangleFan)
+        if(index.type == mesh.triangleFan)
           addInt(1);
-        else if(index.type == mesh.geometry.triangleStrip)
+        else if(index.type == mesh.triangleStrip)
           addInt(2);
         else
           addInt(3);

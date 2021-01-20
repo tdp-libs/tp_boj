@@ -10,14 +10,14 @@ namespace tp_boj
 {
 
 //##################################################################################################
-std::vector<tp_maps::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
+std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
                                                                std::unordered_map<tp_utils::StringID, std::string>& texturePaths,
                                                                int triangleFan,
                                                                int triangleStrip,
                                                                int triangles);
 
 //##################################################################################################
-std::vector<tp_maps::Geometry3D> deserializeObject(const std::string& data,
+std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data,
                                                    int triangleFan,
                                                    int triangleStrip,
                                                    int triangles);

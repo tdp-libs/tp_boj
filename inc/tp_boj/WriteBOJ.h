@@ -12,12 +12,12 @@ namespace tp_boj
 std::string cleanTextureName(const tp_utils::StringID& name);
 
 //##################################################################################################
-void writeObjectAndTexturesToFile(const std::vector<tp_maps::Geometry3D>& object,
+void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture);
 
 //##################################################################################################
-std::string serializeObject(const std::vector<tp_maps::Geometry3D>& object,
+std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
                             const std::function<void(const tp_utils::StringID&)>& saveTexture);
 
 }
