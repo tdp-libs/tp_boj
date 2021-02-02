@@ -110,6 +110,11 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
       version = 3;
       objCount = readInt();
     }
+    if(objCount == (uint32_t(0)-4))
+    {
+      version = 4;
+      objCount = readInt();
+    }
 
     std::vector<tp_math_utils::Geometry3D> object;
     object.resize(size_t(objCount));
@@ -138,13 +143,16 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         vert.normal.y = readFloat();
         vert.normal.z = readFloat();
 
-        vert.tangent.x = readFloat();
-        vert.tangent.y = readFloat();
-        vert.tangent.z = readFloat();
+        if(version<4)
+        {
+          readFloat();
+          readFloat();
+          readFloat();
 
-        vert.bitangent.x = readFloat();
-        vert.bitangent.y = readFloat();
-        vert.bitangent.z = readFloat();
+          readFloat();
+          readFloat();
+          readFloat();
+        }
       }
 
       mesh.indexes.resize(size_t(readInt()));
