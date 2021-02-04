@@ -95,25 +95,15 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
   {
     uint32_t objCount = readInt();
     int version=0;
-    if(objCount == (uint32_t(0)-1))
+
+    for(uint32_t v=6; v; v--)
     {
-      version = 1;
-      objCount = readInt();
-    }
-    if(objCount == (uint32_t(0)-2))
-    {
-      version = 2;
-      objCount = readInt();
-    }
-    if(objCount == (uint32_t(0)-3))
-    {
-      version = 3;
-      objCount = readInt();
-    }
-    if(objCount == (uint32_t(0)-4))
-    {
-      version = 4;
-      objCount = readInt();
+      if(objCount == (uint32_t(0)-v))
+      {
+        version = v;
+        objCount = readInt();
+        break;
+      }
     }
 
     std::vector<tp_math_utils::Geometry3D> object;
@@ -197,6 +187,12 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         mesh.material.roughness      = readFloat();
         mesh.material.metalness      = readFloat();
 
+        if(version>4)
+        {
+          mesh.material.transmission = readFloat();
+          mesh.material.ior          = readFloat();
+        }
+
         mesh.material.useAmbient     = readFloat();
         mesh.material.useDiffuse     = readFloat();
         mesh.material.useNdotL       = readFloat();
@@ -205,6 +201,7 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         mesh.material.useLightMask   = readFloat();
         mesh.material.useReflection  = readFloat();
       }
+
 
       if(version>0)
       {

@@ -62,7 +62,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    addInt(uint32_t(0)-4); // Version 4
+    addInt(uint32_t(0)-5); // Version 5
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
@@ -119,6 +119,8 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
       addFloat(mesh.material.roughness);
       addFloat(mesh.material.metalness);
+      addFloat(mesh.material.transmission);
+      addFloat(mesh.material.ior);
 
       addFloat(mesh.material.useAmbient);
       addFloat(mesh.material.useDiffuse);
