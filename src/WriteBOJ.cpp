@@ -122,6 +122,22 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.transmission);
       addFloat(mesh.material.ior);
 
+      addFloat(mesh.material.sssScale);
+
+      addFloat(mesh.material.sssRadius.x);
+      addFloat(mesh.material.sssRadius.y);
+      addFloat(mesh.material.sssRadius.z);
+
+      addFloat(mesh.material.sss.x);
+      addFloat(mesh.material.sss.y);
+      addFloat(mesh.material.sss.z);
+
+      addFloat(mesh.material.emission.x);
+      addFloat(mesh.material.emission.y);
+      addFloat(mesh.material.emission.z);
+
+      addFloat(mesh.material.emissionScale);
+
       addFloat(mesh.material.useAmbient);
       addFloat(mesh.material.useDiffuse);
       addFloat(mesh.material.useNdotL);

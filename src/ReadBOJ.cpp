@@ -184,13 +184,29 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
       if(version>2)
       {
-        mesh.material.roughness      = readFloat();
-        mesh.material.metalness      = readFloat();
+        mesh.material.roughness       = readFloat();
+        mesh.material.metalness       = readFloat();
 
         if(version>4)
         {
-          mesh.material.transmission = readFloat();
-          mesh.material.ior          = readFloat();
+          mesh.material.transmission  = readFloat();
+          mesh.material.ior           = readFloat();
+
+          mesh.material.sssScale      = readFloat();
+
+          mesh.material.sssRadius.x   = readFloat();
+          mesh.material.sssRadius.y   = readFloat();
+          mesh.material.sssRadius.z   = readFloat();
+
+          mesh.material.sss.x         = readFloat();
+          mesh.material.sss.y         = readFloat();
+          mesh.material.sss.z         = readFloat();
+
+          mesh.material.emission.x    = readFloat();
+          mesh.material.emission.y    = readFloat();
+          mesh.material.emission.z    = readFloat();
+
+          mesh.material.emissionScale = readFloat();
         }
 
         mesh.material.useAmbient     = readFloat();
