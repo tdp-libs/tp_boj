@@ -8,8 +8,6 @@
 
 namespace tp_boj
 {
-//##################################################################################################
-std::string cleanTextureName(const tp_utils::StringID& name);
 
 //##################################################################################################
 void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& object,

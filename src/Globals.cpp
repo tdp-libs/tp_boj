@@ -4,6 +4,40 @@ namespace tp_boj
 {
 
 //##################################################################################################
+std::string cleanTextureName(const tp_utils::StringID& name)
+{
+  std::string r = name.keyString();
+
+  for(size_t i=0; i<r.size(); i++)
+    r[i] = char(std::tolower(r[i]));
+
+  auto getBack = [&](char del)
+  {
+    std::vector<std::string> parts;
+    tpSplit(parts, r, del);
+    r = parts.back();
+  };
+
+  auto getFront = [&](const std::string& del)
+  {
+    std::vector<std::string> parts;
+    tpSplit(parts, r, del);
+    r = parts.front();
+  };
+
+  getBack('/');
+  getBack('\\');
+
+  getFront(".png");
+  getFront(".jpg");
+  getFront(".jpeg");
+  getFront(".bmp");
+  getFront(".tga");
+
+  return r;
+}
+
+//##################################################################################################
 std::string getAssociatedFilePath(const std::string& filePath, const std::string& fileName)
 {
   std::string directory;
