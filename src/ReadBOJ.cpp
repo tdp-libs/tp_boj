@@ -31,12 +31,13 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
     };
 
     addTexture(mesh.material.   albedoTexture);  //!< mtl: map_Kd or map_Ka
-    addTexture(mesh.material. specularTexture);  //!< mtl: map_Ks
     addTexture(mesh.material.    alphaTexture);  //!< mtl: map_d
     addTexture(mesh.material.  normalsTexture);  //!< mtl: map_Bump
     addTexture(mesh.material.roughnessTexture);  //!<
     addTexture(mesh.material.metalnessTexture);  //!<
-    addTexture(mesh.material.       aoTexture);  //!<
+    addTexture(mesh.material. emissionTexture);  //!<
+    addTexture(mesh.material.      sssTexture);  //!<
+    addTexture(mesh.material.   heightTexture);  //!<
   }
 
   return geometry;
@@ -173,9 +174,12 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         mesh.material.albedo.z = readFloat();
       }
 
-      mesh.material.specular.x = readFloat();
-      mesh.material.specular.y = readFloat();
-      mesh.material.specular.z = readFloat();
+      if(version<6)
+      {
+        readFloat(); // specular
+        readFloat(); // specular
+        readFloat(); // specular
+      }
 
       if(version<3)
         readFloat();
@@ -207,6 +211,12 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
           mesh.material.emission.z    = readFloat();
 
           mesh.material.emissionScale = readFloat();
+
+          if(version>5)
+          {
+            mesh.material.heightScale    = readFloat();
+            mesh.material.heightMidlevel = readFloat();
+          }
         }
 
         mesh.material.useAmbient     = readFloat();
@@ -225,7 +235,8 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
           readFloat();
 
         mesh.material.albedoScale   = readFloat();
-        mesh.material.specularScale = readFloat();
+        if(version<6)
+          readFloat(); //specularScale
       }
 
       if(version>1)
@@ -238,7 +249,8 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         readString();
 
       mesh.material.albedoTexture  = readString();
-      mesh.material.specularTexture = readString();
+      if(version<6)
+        readString(); //specularTexture
       mesh.material.alphaTexture    = readString();
       mesh.material.normalsTexture  = readString();
 
@@ -246,7 +258,14 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
       {
         mesh.material.roughnessTexture = readString();
         mesh.material.metalnessTexture = readString();
-        mesh.material.aoTexture        = readString();
+        if(version<6)
+          readString(); //aoTexture
+        else
+        {
+          mesh.material.emissionTexture = readString();
+          mesh.material.     sssTexture = readString();
+          mesh.material.  heightTexture = readString();
+        }
       }
     }
 

@@ -28,7 +28,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    addInt(uint32_t(0)-5); // Version 5
+    addInt(uint32_t(0)-6); // Version 6
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
@@ -77,10 +77,6 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.albedo.y);
       addFloat(mesh.material.albedo.z);
 
-      addFloat(mesh.material.specular.x);
-      addFloat(mesh.material.specular.y);
-      addFloat(mesh.material.specular.z);
-
       addFloat(mesh.material.alpha);
 
       addFloat(mesh.material.roughness);
@@ -103,6 +99,8 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.emission.z);
 
       addFloat(mesh.material.emissionScale);
+      addFloat(mesh.material.heightScale);
+      addFloat(mesh.material.heightMidlevel);
 
       addFloat(mesh.material.useAmbient);
       addFloat(mesh.material.useDiffuse);
@@ -113,17 +111,17 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.useReflection);
 
       addFloat(mesh.material.albedoScale);
-      addFloat(mesh.material.specularScale);
 
       addInt(mesh.material.tileTextures?1:0);
 
-      addString(cleanTextureName(mesh.material.albedoTexture   ));
-      addString(cleanTextureName(mesh.material.specularTexture ));
-      addString(cleanTextureName(mesh.material.alphaTexture    ));
-      addString(cleanTextureName(mesh.material.normalsTexture  ));
+      addString(cleanTextureName(mesh.material.   albedoTexture));
+      addString(cleanTextureName(mesh.material.    alphaTexture));
+      addString(cleanTextureName(mesh.material.  normalsTexture));
       addString(cleanTextureName(mesh.material.roughnessTexture));
       addString(cleanTextureName(mesh.material.metalnessTexture));
-      addString(cleanTextureName(mesh.material.aoTexture       ));
+      addString(cleanTextureName(mesh.material. emissionTexture));
+      addString(cleanTextureName(mesh.material.      sssTexture));
+      addString(cleanTextureName(mesh.material.   heightTexture));
     }
   };
 
@@ -178,13 +176,14 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
   std::unordered_set<tp_utils::StringID> textures;
   for(const auto& mesh : object)
   {
-    textures.insert(mesh.material. albedoTexture   );
-    textures.insert(mesh.material. specularTexture );
-    textures.insert(mesh.material. alphaTexture    );
-    textures.insert(mesh.material. normalsTexture  );
-    textures.insert(mesh.material. roughnessTexture);
-    textures.insert(mesh.material. metalnessTexture);
-    textures.insert(mesh.material. aoTexture       );
+    textures.insert(mesh.material.   albedoTexture);
+    textures.insert(mesh.material.    alphaTexture);
+    textures.insert(mesh.material.  normalsTexture);
+    textures.insert(mesh.material.roughnessTexture);
+    textures.insert(mesh.material.metalnessTexture);
+    textures.insert(mesh.material. emissionTexture);
+    textures.insert(mesh.material.      sssTexture);
+    textures.insert(mesh.material.   heightTexture);
   }
 
   for(const auto& texture : textures)
