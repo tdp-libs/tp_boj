@@ -97,7 +97,7 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
     uint32_t objCount = readInt();
     int version=0;
 
-    for(uint32_t v=6; v; v--)
+    for(uint32_t v=8; v; v--)
     {
       if(objCount == (uint32_t(0)-v))
       {
@@ -193,8 +193,19 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
         if(version>4)
         {
-          mesh.material.transmission  = readFloat();
+          mesh.material.transmission  = readFloat();          
+          if(version>7)
+            mesh.material.transmissionRoughness  = readFloat();
+
           mesh.material.ior           = readFloat();
+
+          if(version>6)
+          {
+            mesh.material.sheen              = readFloat();
+            mesh.material.sheenTint          = readFloat();
+            mesh.material.clearCoat          = readFloat();
+            mesh.material.clearCoatRoughness = readFloat();
+          }
 
           mesh.material.sssScale      = readFloat();
 
@@ -211,6 +222,15 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
           mesh.material.emission.z    = readFloat();
 
           mesh.material.emissionScale = readFloat();
+
+          if(version>6)
+          {
+            mesh.material.velvet.x    = readFloat();
+            mesh.material.velvet.y    = readFloat();
+            mesh.material.velvet.z    = readFloat();
+
+            mesh.material.velvetScale = readFloat();
+          }
 
           if(version>5)
           {
@@ -244,7 +264,6 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         mesh.material.tileTextures = readInt();
       }
 
-
       if(version<3)
         readString();
 
@@ -265,6 +284,17 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
           mesh.material.emissionTexture = readString();
           mesh.material.     sssTexture = readString();
           mesh.material.  heightTexture = readString();
+          if(version>6)
+          {
+            mesh.material.         transmissionTexture = readString();
+            mesh.material.transmissionRoughnessTexture = readString();
+            mesh.material.                sheenTexture = readString();
+            mesh.material.            sheenTintTexture = readString();
+            mesh.material.            clearCoatTexture = readString();
+            mesh.material.   clearCoatRoughnessTexture = readString();
+            mesh.material.               velvetTexture = readString();
+            mesh.material.         velvetFactorTexture = readString();
+          }
         }
       }
     }

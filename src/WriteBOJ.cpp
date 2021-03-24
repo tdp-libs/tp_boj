@@ -28,7 +28,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    addInt(uint32_t(0)-6); // Version 6
+    addInt(uint32_t(0)-8); // Version 8
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
@@ -82,7 +82,13 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.roughness);
       addFloat(mesh.material.metalness);
       addFloat(mesh.material.transmission);
+      addFloat(mesh.material.transmissionRoughness);
       addFloat(mesh.material.ior);
+
+      addFloat(mesh.material.sheen);
+      addFloat(mesh.material.sheenTint);
+      addFloat(mesh.material.clearCoat);
+      addFloat(mesh.material.clearCoatRoughness);
 
       addFloat(mesh.material.sssScale);
 
@@ -99,6 +105,13 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.emission.z);
 
       addFloat(mesh.material.emissionScale);
+
+      addFloat(mesh.material.velvet.x);
+      addFloat(mesh.material.velvet.y);
+      addFloat(mesh.material.velvet.z);
+
+      addFloat(mesh.material.velvetScale);
+
       addFloat(mesh.material.heightScale);
       addFloat(mesh.material.heightMidlevel);
 
@@ -114,14 +127,22 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
       addInt(mesh.material.tileTextures?1:0);
 
-      addString(cleanTextureName(mesh.material.   albedoTexture));
-      addString(cleanTextureName(mesh.material.    alphaTexture));
-      addString(cleanTextureName(mesh.material.  normalsTexture));
-      addString(cleanTextureName(mesh.material.roughnessTexture));
-      addString(cleanTextureName(mesh.material.metalnessTexture));
-      addString(cleanTextureName(mesh.material. emissionTexture));
-      addString(cleanTextureName(mesh.material.      sssTexture));
-      addString(cleanTextureName(mesh.material.   heightTexture));
+      addString(cleanTextureName(mesh.material.               albedoTexture));
+      addString(cleanTextureName(mesh.material.                alphaTexture));
+      addString(cleanTextureName(mesh.material.              normalsTexture));
+      addString(cleanTextureName(mesh.material.            roughnessTexture));
+      addString(cleanTextureName(mesh.material.            metalnessTexture));
+      addString(cleanTextureName(mesh.material.             emissionTexture));
+      addString(cleanTextureName(mesh.material.                  sssTexture));
+      addString(cleanTextureName(mesh.material.               heightTexture));
+      addString(cleanTextureName(mesh.material.         transmissionTexture));
+      addString(cleanTextureName(mesh.material.transmissionRoughnessTexture));
+      addString(cleanTextureName(mesh.material.                sheenTexture));
+      addString(cleanTextureName(mesh.material.            sheenTintTexture));
+      addString(cleanTextureName(mesh.material.            clearCoatTexture));
+      addString(cleanTextureName(mesh.material.   clearCoatRoughnessTexture));
+      addString(cleanTextureName(mesh.material.               velvetTexture));
+      addString(cleanTextureName(mesh.material.         velvetFactorTexture));
     }
   };
 
