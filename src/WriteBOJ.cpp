@@ -196,16 +196,8 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
   std::unordered_set<tp_utils::StringID> textures;
   for(const auto& mesh : object)
-  {
-    textures.insert(mesh.material.   albedoTexture);
-    textures.insert(mesh.material.    alphaTexture);
-    textures.insert(mesh.material.  normalsTexture);
-    textures.insert(mesh.material.roughnessTexture);
-    textures.insert(mesh.material.metalnessTexture);
-    textures.insert(mesh.material. emissionTexture);
-    textures.insert(mesh.material.      sssTexture);
-    textures.insert(mesh.material.   heightTexture);
-  }
+    for(const auto& id : mesh.material.allTextures())
+      textures.insert(id);
 
   for(const auto& texture : textures)
     if(texture.isValid())
