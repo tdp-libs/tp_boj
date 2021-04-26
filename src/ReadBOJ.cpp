@@ -18,27 +18,8 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 
   std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath));
   for(const auto& mesh : geometry)
-  {
-    auto addTexture = [&](const tp_utils::StringID& name)
-    {
-      if(!name.isValid())
-        return;
-
-      if(tpContainsKey(texturePaths, name))
-        return;
-
+    for(const auto& name : mesh.material.allTextures())
       texturePaths[name] = directory + name.keyString() + ".png";
-    };
-
-    addTexture(mesh.material.   albedoTexture);  //!< mtl: map_Kd or map_Ka
-    addTexture(mesh.material.    alphaTexture);  //!< mtl: map_d
-    addTexture(mesh.material.  normalsTexture);  //!< mtl: map_Bump
-    addTexture(mesh.material.roughnessTexture);  //!<
-    addTexture(mesh.material.metalnessTexture);  //!<
-    addTexture(mesh.material. emissionTexture);  //!<
-    addTexture(mesh.material.      sssTexture);  //!<
-    addTexture(mesh.material.   heightTexture);  //!<
-  }
 
   return geometry;
 }
@@ -97,7 +78,7 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
     uint32_t objCount = readInt();
     int version=0;
 
-    for(uint32_t v=8; v; v--)
+    for(uint32_t v=9; v; v--)
     {
       if(objCount == (uint32_t(0)-v))
       {
@@ -294,6 +275,14 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
             mesh.material.   clearCoatRoughnessTexture = readString();
             mesh.material.               velvetTexture = readString();
             mesh.material.         velvetFactorTexture = readString();
+
+            if(version>8)
+            {
+              mesh.material.           sssScaleTexture = readString();
+              mesh.material.   iridescentFactorTexture = readString();
+              mesh.material.   iridescentOffsetTexture = readString();
+              mesh.material.iridescentFrequencyTexture = readString();
+            }
           }
         }
       }
