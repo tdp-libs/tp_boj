@@ -78,7 +78,7 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
     uint32_t objCount = readInt();
     int version=0;
 
-    for(uint32_t v=10; v; v--)
+    for(uint32_t v=11; v; v--)
     {
       if(objCount == (uint32_t(0)-v))
       {
@@ -192,6 +192,11 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
               mesh.material.   iridescentFactor = readFloat();
               mesh.material.   iridescentOffset = readFloat();
               mesh.material.iridescentFrequency = readFloat();
+
+              if(version>10)
+              {
+                mesh.material.  specular        = readFloat();
+              }
             }
           }
 

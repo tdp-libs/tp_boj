@@ -93,6 +93,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.iridescentFactor);
       addFloat(mesh.material.iridescentOffset);
       addFloat(mesh.material.iridescentFrequency);
+      addFloat(mesh.material.specular);
 
       addFloat(mesh.material.sssScale);
 
@@ -136,7 +137,6 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addString(cleanTextureName(mesh.material.              normalsTexture));
       addString(cleanTextureName(mesh.material.            roughnessTexture));
       addString(cleanTextureName(mesh.material.            metalnessTexture));
-      addString(cleanTextureName(mesh.material.             specularTexture));
       addString(cleanTextureName(mesh.material.             emissionTexture));
       addString(cleanTextureName(mesh.material.                  sssTexture));
       addString(cleanTextureName(mesh.material.               heightTexture));
@@ -152,6 +152,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addString(cleanTextureName(mesh.material.     iridescentFactorTexture));
       addString(cleanTextureName(mesh.material.     iridescentOffsetTexture));
       addString(cleanTextureName(mesh.material.  iridescentFrequencyTexture));
+      addString(cleanTextureName(mesh.material.             specularTexture));
     }
   };
 
