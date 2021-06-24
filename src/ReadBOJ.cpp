@@ -289,6 +289,11 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
               mesh.material.   iridescentFactorTexture = readString();
               mesh.material.   iridescentOffsetTexture = readString();
               mesh.material.iridescentFrequencyTexture = readString();
+
+              if(version>10)
+              {
+                mesh.material.         specularTexture = readString();
+              }
             }
           }
         }

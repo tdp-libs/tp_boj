@@ -28,7 +28,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    addInt(uint32_t(0)-10); // Version 10
+    addInt(uint32_t(0)-11); // Version 11
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
@@ -136,6 +136,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addString(cleanTextureName(mesh.material.              normalsTexture));
       addString(cleanTextureName(mesh.material.            roughnessTexture));
       addString(cleanTextureName(mesh.material.            metalnessTexture));
+      addString(cleanTextureName(mesh.material.             specularTexture));
       addString(cleanTextureName(mesh.material.             emissionTexture));
       addString(cleanTextureName(mesh.material.                  sssTexture));
       addString(cleanTextureName(mesh.material.               heightTexture));
