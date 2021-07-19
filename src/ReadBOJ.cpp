@@ -27,6 +27,8 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
+  uint32_t maxVersion=12;
+
   auto p = data.data();
   auto pMax = p + data.size();
 
@@ -76,15 +78,25 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
   try
   {
     uint32_t objCount = readInt();
-    int version=0;
+    uint32_t version=0;
 
-    for(uint32_t v=11; v; v--)
+    for(uint32_t v=maxVersion; v; v--)
     {
       if(objCount == (uint32_t(0)-v))
       {
         version = v;
         objCount = readInt();
         break;
+      }
+    }
+
+    if(version==0)
+    {
+      uint32_t fileVersion = uint32_t(0)-objCount;
+      if(fileVersion<10000)
+      {
+        tpWarning() << "Failed to deserialize model, BOJ file version: " << fileVersion << " max supported version: " << maxVersion;
+        return std::vector<tp_math_utils::Geometry3D>();
       }
     }
 
@@ -205,6 +217,17 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
           mesh.material.sssRadius.x   = readFloat();
           mesh.material.sssRadius.y   = readFloat();
           mesh.material.sssRadius.z   = readFloat();
+
+          if(version>11)
+          {
+            mesh.material.albedoBrightness = readFloat();
+            mesh.material.albedoContrast   = readFloat();
+            mesh.material.albedoGamma      = readFloat();
+            mesh.material.albedoHue        = readFloat();
+            mesh.material.albedoSaturation = readFloat();
+            mesh.material.albedoValue      = readFloat();
+            mesh.material.albedoFactor     = readFloat();
+          }
 
           mesh.material.sss.x         = readFloat();
           mesh.material.sss.y         = readFloat();
