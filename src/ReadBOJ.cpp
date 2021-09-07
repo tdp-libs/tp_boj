@@ -27,7 +27,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=12;
+  uint32_t maxVersion=13;
 
   auto p = data.data();
   auto pMax = p + data.size();
@@ -278,6 +278,17 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
       if(version>1)
       {
         mesh.material.tileTextures = readInt();
+
+        if(version>12)
+        {
+          mesh.material.skewUV.x      = readFloat();
+          mesh.material.skewUV.y      = readFloat();
+          mesh.material.scaleUV.x     = readFloat();
+          mesh.material.scaleUV.y     = readFloat();
+          mesh.material.translateUV.x = readFloat();
+          mesh.material.translateUV.y = readFloat();
+          mesh.material.rotateUV      = readFloat();
+        }
       }
 
       if(version<3)
