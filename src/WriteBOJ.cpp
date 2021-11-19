@@ -23,6 +23,22 @@ void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& 
 }
 
 //##################################################################################################
+void writeObjectAndTexturesToData(const std::vector<tp_math_utils::Geometry3D>& object,
+                                  const std::string& filePath,
+                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
+                                  const std::function<void(const std::string& path, const std::string& data, bool binary)>& saveFile)
+{
+  std::string directory = getAssociatedFilePath(filePath);
+
+  std::string objectData = serializeObject(object, [&](const tp_utils::StringID& name)
+  {
+    if(name.isValid())
+      saveTexture(name, directory + cleanTextureName(name) + ".png");
+  });
+  saveFile(filePath, objectData, true);
+}
+
+//##################################################################################################
 std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
                             const std::function<void(const tp_utils::StringID&)>& saveTexture)
 {
@@ -99,7 +115,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
       addFloat(mesh.material.sssRadius.x);
       addFloat(mesh.material.sssRadius.y);
-      addFloat(mesh.material.sssRadius.z);      
+      addFloat(mesh.material.sssRadius.z);
 
       addFloat(mesh.material.albedoBrightness);
       addFloat(mesh.material.albedoContrast);

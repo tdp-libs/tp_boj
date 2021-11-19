@@ -353,7 +353,6 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
   }
   catch(...)
   {
-    tpWarning() << "Failed to deserialize model.";
     return std::vector<tp_math_utils::Geometry3D>();
   }
 }
