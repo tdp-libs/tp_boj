@@ -34,6 +34,17 @@ std::string cleanTextureName(const tp_utils::StringID& name)
   getFront(".bmp");
   getFront(".tga");
 
+  for(char& c : r)
+  {
+    if(c>='a' && c<='z')
+      continue;
+
+    if(c>='0' && c<='9')
+      continue;
+
+    c = '_';
+  }
+
   return r;
 }
 
