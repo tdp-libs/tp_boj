@@ -44,7 +44,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    addInt(uint32_t(0)-14); // Version 14
+    addInt(uint32_t(0)-15); // Version 15
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
     {
@@ -87,7 +87,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
           addInt(uint32_t(i));
       }
 
-      addString(mesh.material.name.keyString());
+      addString(mesh.material.name.toString());
 
       addFloat(mesh.material.albedo.x);
       addFloat(mesh.material.albedo.y);
@@ -164,12 +164,13 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addFloat(mesh.material.translateUV.y);
       addFloat(mesh.material.rotateUV);
 
-      addInt(mesh.material.rayVisibilitityCamera      ?1:0);
-      addInt(mesh.material.rayVisibilitityDiffuse     ?1:0);
-      addInt(mesh.material.rayVisibilitityGlossy      ?1:0);
-      addInt(mesh.material.rayVisibilitityTransmission?1:0);
-      addInt(mesh.material.rayVisibilitityScatter     ?1:0);
-      addInt(mesh.material.rayVisibilitityShadow      ?1:0);
+      addInt(mesh.material.rayVisibilitityCamera       ?1:0);
+      addInt(mesh.material.rayVisibilitityDiffuse      ?1:0);
+      addInt(mesh.material.rayVisibilitityGlossy       ?1:0);
+      addInt(mesh.material.rayVisibilitityTransmission ?1:0);
+      addInt(mesh.material.rayVisibilitityScatter      ?1:0);
+      addInt(mesh.material.rayVisibilitityShadow       ?1:0);
+      addInt(mesh.material.rayVisibilitityShadowCatcher?1:0);
 
       addString(cleanTextureName(mesh.material.               albedoTexture));
       addString(cleanTextureName(mesh.material.                alphaTexture));

@@ -19,7 +19,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
   std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath));
   for(const auto& mesh : geometry)
     for(const auto& name : mesh.material.allTextures())
-      texturePaths[name] = directory + name.keyString() + ".png";
+      texturePaths[name] = directory + name.toString() + ".png";
 
   return geometry;
 }
@@ -297,6 +297,9 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
             mesh.material.rayVisibilitityTransmission = readInt();
             mesh.material.rayVisibilitityScatter      = readInt();
             mesh.material.rayVisibilitityShadow       = readInt();
+
+            if(version>14)
+              mesh.material.rayVisibilitityShadowCatcher = readInt();
           }
         }
       }

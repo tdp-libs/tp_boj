@@ -6,7 +6,7 @@ namespace tp_boj
 //##################################################################################################
 std::string cleanTextureName(const tp_utils::StringID& name)
 {
-  std::string r = name.keyString();
+  std::string r = name.toString();
 
   for(size_t i=0; i<r.size(); i++)
     r[i] = char(std::tolower(r[i]));
