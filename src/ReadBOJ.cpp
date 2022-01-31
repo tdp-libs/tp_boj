@@ -27,7 +27,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=14;
+  uint32_t maxVersion=15;
 
   auto p = data.data();
   auto pMax = p + data.size();
