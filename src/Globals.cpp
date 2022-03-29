@@ -49,7 +49,7 @@ std::string cleanTextureName(const tp_utils::StringID& name)
 }
 
 //##################################################################################################
-std::string getAssociatedFilePath(const std::string& filePath, const std::string& fileName)
+std::string getAssociatedFilePath(const std::string& filePath, const std::string& filename)
 {
   std::string directory;
 
@@ -73,7 +73,7 @@ std::string getAssociatedFilePath(const std::string& filePath, const std::string
     }
   }
 
-  return directory + fileName;
+  return directory + filename;
 }
 
 }

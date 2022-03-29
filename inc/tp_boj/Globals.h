@@ -17,7 +17,7 @@ namespace tp_boj
 std::string cleanTextureName(const tp_utils::StringID& name);
 
 //##################################################################################################
-std::string getAssociatedFilePath(const std::string& filePath, const std::string& fileName=std::string());
+std::string getAssociatedFilePath(const std::string& filePath, const std::string& filename=std::string());
 
 }
 
