@@ -27,7 +27,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=15;
+  uint32_t maxVersion=16;
 
   auto p = data.data();
   auto pMax = p + data.size();
@@ -220,6 +220,12 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
           if(version>11)
           {
+            if(version>15)
+            {
+              mesh.material.sssMethod = tp_math_utils::SSSMethod(readInt());
+              mesh.material.normalStrength = readFloat();
+            }
+
             mesh.material.albedoBrightness = readFloat();
             mesh.material.albedoContrast   = readFloat();
             mesh.material.albedoGamma      = readFloat();
