@@ -302,15 +302,15 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
           if(version>13)
           {
-            mesh.material.rayVisibilitityCamera       = readInt();
-            mesh.material.rayVisibilitityDiffuse      = readInt();
-            mesh.material.rayVisibilitityGlossy       = readInt();
-            mesh.material.rayVisibilitityTransmission = readInt();
-            mesh.material.rayVisibilitityScatter      = readInt();
-            mesh.material.rayVisibilitityShadow       = readInt();
+            mesh.material.rayVisibilityCamera       = readInt();
+            mesh.material.rayVisibilityDiffuse      = readInt();
+            mesh.material.rayVisibilityGlossy       = readInt();
+            mesh.material.rayVisibilityTransmission = readInt();
+            mesh.material.rayVisibilityScatter      = readInt();
+            mesh.material.rayVisibilityShadow       = readInt();
 
             if(version>14)
-              mesh.material.rayVisibilitityShadowCatcher = readInt();
+              mesh.material.rayVisibilityShadowCatcher = readInt();
           }
         }
       }
