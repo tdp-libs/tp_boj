@@ -1,10 +1,12 @@
 #ifndef tp_boj_ReadBOJ_h
 #define tp_boj_ReadBOJ_h
 
-#include "tp_boj/Globals.h"
+#include "tp_boj/Globals.h" // IWYU pragma: keep
+
 #include "tp_math_utils/Geometry3D.h"
 
 #include <iosfwd>
+#include <unordered_map>
 
 namespace tp_boj
 {
