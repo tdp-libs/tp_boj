@@ -27,7 +27,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=17;
+  uint32_t maxVersion=18;
 
   auto p = data.data();
   auto pMax = p + data.size();
@@ -115,10 +115,13 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         vert.vert.y = readFloat();
         vert.vert.z = readFloat();
 
-        vert.color.x = readFloat();
-        vert.color.y = readFloat();
-        vert.color.z = readFloat();
-        vert.color.w = readFloat();
+        if(version<18)
+        {
+          readFloat(); // vert.color.x
+          readFloat(); // vert.color.y
+          readFloat(); // vert.color.z
+          readFloat(); // vert.color.w
+        }
 
         vert.texture.x = readFloat();
         vert.texture.y = readFloat();
