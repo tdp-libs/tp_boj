@@ -4,9 +4,9 @@
 #include "tp_utils/StringID.h"
 
 #if defined(TP_BOJ_LIBRARY)
-#  define TP_BOJ_SHARED_EXPORT TP_EXPORT
+#  define TP_BOJ_EXPORT TP_EXPORT
 #else
-#  define TP_BOJ_SHARED_EXPORT TP_IMPORT
+#  define TP_BOJ_EXPORT TP_IMPORT
 #endif
 
 //##################################################################################################
