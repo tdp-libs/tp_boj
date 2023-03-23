@@ -158,13 +158,13 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
       addInt(mesh.material.tileTextures?1:0);
 
-      addFloat(mesh.material.skewUV.x);
-      addFloat(mesh.material.skewUV.y);
-      addFloat(mesh.material.scaleUV.x);
-      addFloat(mesh.material.scaleUV.y);
-      addFloat(mesh.material.translateUV.x);
-      addFloat(mesh.material.translateUV.y);
-      addFloat(mesh.material.rotateUV);
+      addFloat(mesh.material.uvTransformation.skewUV.x);
+      addFloat(mesh.material.uvTransformation.skewUV.y);
+      addFloat(mesh.material.uvTransformation.scaleUV.x);
+      addFloat(mesh.material.uvTransformation.scaleUV.y);
+      addFloat(mesh.material.uvTransformation.translateUV.x);
+      addFloat(mesh.material.uvTransformation.translateUV.y);
+      addFloat(mesh.material.uvTransformation.rotateUV);
 
       addInt(mesh.material.rayVisibilityCamera       ?1:0);
       addInt(mesh.material.rayVisibilityDiffuse      ?1:0);

@@ -295,13 +295,13 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
         if(version>12)
         {
-          mesh.material.skewUV.x      = readFloat();
-          mesh.material.skewUV.y      = readFloat();
-          mesh.material.scaleUV.x     = readFloat();
-          mesh.material.scaleUV.y     = readFloat();
-          mesh.material.translateUV.x = readFloat();
-          mesh.material.translateUV.y = readFloat();
-          mesh.material.rotateUV      = readFloat();
+          mesh.material.uvTransformation.skewUV.x      = readFloat();
+          mesh.material.uvTransformation.skewUV.y      = readFloat();
+          mesh.material.uvTransformation.scaleUV.x     = readFloat();
+          mesh.material.uvTransformation.scaleUV.y     = readFloat();
+          mesh.material.uvTransformation.translateUV.x = readFloat();
+          mesh.material.uvTransformation.translateUV.y = readFloat();
+          mesh.material.uvTransformation.rotateUV      = readFloat();
 
           if(version>13)
           {
