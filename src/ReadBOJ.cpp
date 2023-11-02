@@ -27,7 +27,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=18;
+  uint32_t maxVersion=19;
 
   auto p = data.data();
   auto pMax = p + data.size();
@@ -359,6 +359,12 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
               if(version>10)
               {
                 mesh.material.         specularTexture = readString();
+
+                if(version>18)
+                {
+                  mesh.material.           rgbaTexture = readString();
+                  mesh.material.          rmttrTexture = readString();
+                }
               }
             }
           }

@@ -44,7 +44,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
-    uint32_t maxVersion=18;
+    uint32_t maxVersion=19;
     addInt(uint32_t(0)-maxVersion);
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
@@ -195,6 +195,8 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
       addString(cleanTextureName(mesh.material.     iridescentOffsetTexture));
       addString(cleanTextureName(mesh.material.  iridescentFrequencyTexture));
       addString(cleanTextureName(mesh.material.             specularTexture));
+      addString(cleanTextureName(mesh.material.                 rgbaTexture));
+      addString(cleanTextureName(mesh.material.                rmttrTexture));
     }
   };
 
