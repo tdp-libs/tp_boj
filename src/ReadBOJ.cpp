@@ -164,11 +164,13 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
         mesh.material.shaderType = tp_math_utils::ShaderType(readInt());
       }
 
+#if 0
+      // commented out until ENG-408 is implemented properly
       if(version>19)
       {
         mesh.material.albedoColorspace = tp_math_utils::Colorspace(readInt());
       }
-
+#endif
       mesh.material.albedo.x = readFloat();
       mesh.material.albedo.y = readFloat();
       mesh.material.albedo.z = readFloat();

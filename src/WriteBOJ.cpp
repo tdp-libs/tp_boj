@@ -44,7 +44,12 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
+#if 0
+    // commented out until ENG-408 is implemented properly
     uint32_t maxVersion=20;
+#else
+    uint32_t maxVersion=19;
+#endif
     addInt(uint32_t(0)-maxVersion);
     addInt(uint32_t(object.size()));
     for(const auto& mesh : object)
@@ -87,8 +92,10 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
 
       addInt(int(mesh.material.shaderType));
 
+#if 0
+      // commented out until ENG-408 is implemented properly
       addInt(int(mesh.material.albedoColorspace));
-
+#endif
       addFloat(mesh.material.albedo.x);
       addFloat(mesh.material.albedo.y);
       addFloat(mesh.material.albedo.z);
