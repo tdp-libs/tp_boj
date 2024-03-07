@@ -1,9 +1,12 @@
 #include "tp_boj/ReadBOJ.h"
 
 #include "tp_math_utils/Geometry3D.h"
+#include "tp_math_utils/materials/OpenGLMaterial.h"
+#include "tp_math_utils/materials/LegacyMaterial.h"
 
 #include "tp_utils/FileUtils.h"
 #include "tp_utils/DebugUtils.h"
+#include "tp_utils/JSONUtils.h"
 
 #include <stdexcept>
 
@@ -17,9 +20,14 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
   std::string directory = getAssociatedFilePath(filePath);
 
   std::vector<tp_math_utils::Geometry3D> geometry = deserializeObject(tp_utils::readBinaryFile(filePath));
+
+
+  std::unordered_set<tp_utils::StringID> textures;
   for(const auto& mesh : geometry)
-    for(const auto& name : mesh.material.allTextures())
-      texturePaths[name] = directory + name.toString() + ".png";
+    mesh.material.allTextureIDs(textures);
+
+  for(const auto& name : textures)
+    texturePaths[name] = directory + name.toString() + ".png";
 
   return geometry;
 }
@@ -27,7 +35,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data)
 {
-  uint32_t maxVersion=19;
+  uint32_t maxVersion=20;
 
   auto p = data.data();
   auto pMax = p + data.size();
@@ -147,9 +155,9 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
       {
         switch(readInt())
         {
-        case 1:  index.type = mesh.triangleFan;   break;
-        case 2:  index.type = mesh.triangleStrip; break;
-        default: index.type = mesh.triangles;     break;
+          case 1:  index.type = mesh.triangleFan;   break;
+          case 2:  index.type = mesh.triangleStrip; break;
+          default: index.type = mesh.triangles;     break;
         }
 
         index.indexes.resize(size_t(readInt()));
@@ -159,223 +167,235 @@ std::vector<tp_math_utils::Geometry3D> deserializeObject(const std::string& data
 
       mesh.material.name = readString();
 
-      if(version>16)
+      if(version<20)
       {
-        mesh.material.shaderType = tp_math_utils::ShaderType(readInt());
-      }
+        auto openGLMaterial = mesh.material.findOrAddOpenGL();
+        auto legacyMaterial = mesh.material.findOrAddLegacy();
 
-#if 0
-      // commented out until ENG-408 is implemented properly
-      if(version>19)
-      {
-        mesh.material.albedoColorspace = tp_math_utils::Colorspace(readInt());
-      }
-#endif
-      mesh.material.albedo.x = readFloat();
-      mesh.material.albedo.y = readFloat();
-      mesh.material.albedo.z = readFloat();
-
-      if(version<3)
-      {
-        mesh.material.albedo.x = readFloat();
-        mesh.material.albedo.y = readFloat();
-        mesh.material.albedo.z = readFloat();
-      }
-
-      if(version<6)
-      {
-        readFloat(); // specular
-        readFloat(); // specular
-        readFloat(); // specular
-      }
-
-      if(version<3)
-        readFloat();
-
-      mesh.material.alpha = readFloat();
-
-      if(version>2)
-      {
-        mesh.material.roughness       = readFloat();
-        mesh.material.metalness       = readFloat();
-
-        if(version>4)
+        if(version>16)
         {
-          mesh.material.transmission  = readFloat();          
-          if(version>7)
-            mesh.material.transmissionRoughness  = readFloat();
-
-          mesh.material.ior           = readFloat();
-
-          if(version>6)
-          {
-            mesh.material.sheen              = readFloat();
-            mesh.material.sheenTint          = readFloat();
-            mesh.material.clearCoat          = readFloat();
-            mesh.material.clearCoatRoughness = readFloat();
-
-            if(version>9)
-            {
-              mesh.material.   iridescentFactor = readFloat();
-              mesh.material.   iridescentOffset = readFloat();
-              mesh.material.iridescentFrequency = readFloat();
-
-              if(version>10)
-              {
-                mesh.material.  specular        = readFloat();
-              }
-            }
-          }
-
-          mesh.material.sssScale      = readFloat();
-
-          mesh.material.sssRadius.x   = readFloat();
-          mesh.material.sssRadius.y   = readFloat();
-          mesh.material.sssRadius.z   = readFloat();
-
-          if(version>11)
-          {
-            if(version>15)
-            {
-              mesh.material.sssMethod = tp_math_utils::SSSMethod(readInt());
-              mesh.material.normalStrength = readFloat();
-            }
-
-            mesh.material.albedoBrightness = readFloat();
-            mesh.material.albedoContrast   = readFloat();
-            mesh.material.albedoGamma      = readFloat();
-            mesh.material.albedoHue        = readFloat();
-            mesh.material.albedoSaturation = readFloat();
-            mesh.material.albedoValue      = readFloat();
-            mesh.material.albedoFactor     = readFloat();
-          }
-
-          mesh.material.sss.x         = readFloat();
-          mesh.material.sss.y         = readFloat();
-          mesh.material.sss.z         = readFloat();
-
-          mesh.material.emission.x    = readFloat();
-          mesh.material.emission.y    = readFloat();
-          mesh.material.emission.z    = readFloat();
-
-          mesh.material.emissionScale = readFloat();
-
-          if(version>6)
-          {
-            mesh.material.velvet.x    = readFloat();
-            mesh.material.velvet.y    = readFloat();
-            mesh.material.velvet.z    = readFloat();
-
-            mesh.material.velvetScale = readFloat();
-          }
-
-          if(version>5)
-          {
-            mesh.material.heightScale    = readFloat();
-            mesh.material.heightMidlevel = readFloat();
-          }
+          legacyMaterial->shaderType = tp_math_utils::ShaderType(readInt());
         }
 
-        mesh.material.useAmbient     = readFloat();
-        mesh.material.useDiffuse     = readFloat();
-        mesh.material.useNdotL       = readFloat();
-        mesh.material.useAttenuation = readFloat();
-        mesh.material.useShadow      = readFloat();
-        mesh.material.useLightMask   = readFloat();
-        mesh.material.useReflection  = readFloat();
-      }
+        openGLMaterial->albedo.x = readFloat();
+        openGLMaterial->albedo.y = readFloat();
+        openGLMaterial->albedo.z = readFloat();
 
+        if(version<3)
+        {
+          openGLMaterial->albedo.x = readFloat();
+          openGLMaterial->albedo.y = readFloat();
+          openGLMaterial->albedo.z = readFloat();
+        }
 
-      if(version>0)
-      {
+        if(version<6)
+        {
+          readFloat(); // specular
+          readFloat(); // specular
+          readFloat(); // specular
+        }
+
         if(version<3)
           readFloat();
 
-        mesh.material.albedoScale   = readFloat();
-        if(version<6)
-          readFloat(); //specularScale
-      }
+        openGLMaterial->alpha = readFloat();
 
-      if(version>1)
-      {
-        mesh.material.tileTextures = readInt();
-
-        if(version>12)
+        if(version>2)
         {
-          mesh.material.uvTransformation.skewUV.x      = readFloat();
-          mesh.material.uvTransformation.skewUV.y      = readFloat();
-          mesh.material.uvTransformation.scaleUV.x     = readFloat();
-          mesh.material.uvTransformation.scaleUV.y     = readFloat();
-          mesh.material.uvTransformation.translateUV.x = readFloat();
-          mesh.material.uvTransformation.translateUV.y = readFloat();
-          mesh.material.uvTransformation.rotateUV      = readFloat();
+          openGLMaterial->roughness       = readFloat();
+          openGLMaterial->metalness       = readFloat();
 
-          if(version>13)
+          if(version>4)
           {
-            mesh.material.rayVisibilityCamera       = readInt();
-            mesh.material.rayVisibilityDiffuse      = readInt();
-            mesh.material.rayVisibilityGlossy       = readInt();
-            mesh.material.rayVisibilityTransmission = readInt();
-            mesh.material.rayVisibilityScatter      = readInt();
-            mesh.material.rayVisibilityShadow       = readInt();
+            openGLMaterial->transmission  = readFloat();
+            if(version>7)
+              openGLMaterial->transmissionRoughness  = readFloat();
 
-            if(version>14)
-              mesh.material.rayVisibilityShadowCatcher = readInt();
+            legacyMaterial->ior           = readFloat();
+
+            if(version>6)
+            {
+              legacyMaterial->sheen              = readFloat();
+              legacyMaterial->sheenTint          = readFloat();
+              legacyMaterial->clearCoat          = readFloat();
+              legacyMaterial->clearCoatRoughness = readFloat();
+
+              if(version>9)
+              {
+                legacyMaterial->   iridescentFactor = readFloat();
+                legacyMaterial->   iridescentOffset = readFloat();
+                legacyMaterial->iridescentFrequency = readFloat();
+
+                if(version>10)
+                {
+                  legacyMaterial->  specular        = readFloat();
+                }
+              }
+            }
+
+            legacyMaterial->sssScale      = readFloat();
+
+            legacyMaterial->sssRadius.x   = readFloat();
+            legacyMaterial->sssRadius.y   = readFloat();
+            legacyMaterial->sssRadius.z   = readFloat();
+
+            if(version>11)
+            {
+              if(version>15)
+              {
+                legacyMaterial->sssMethod = tp_math_utils::SSSMethod(readInt());
+                legacyMaterial->normalStrength = readFloat();
+              }
+
+              openGLMaterial->albedoBrightness = readFloat();
+              openGLMaterial->albedoContrast   = readFloat();
+              openGLMaterial->albedoGamma      = readFloat();
+              openGLMaterial->albedoHue        = readFloat();
+              openGLMaterial->albedoSaturation = readFloat();
+              openGLMaterial->albedoValue      = readFloat();
+              openGLMaterial->albedoFactor     = readFloat();
+            }
+
+            legacyMaterial->sss.x         = readFloat();
+            legacyMaterial->sss.y         = readFloat();
+            legacyMaterial->sss.z         = readFloat();
+
+            legacyMaterial->emission.x    = readFloat();
+            legacyMaterial->emission.y    = readFloat();
+            legacyMaterial->emission.z    = readFloat();
+
+            legacyMaterial->emissionScale = readFloat();
+
+            if(version>6)
+            {
+              legacyMaterial->velvet.x    = readFloat();
+              legacyMaterial->velvet.y    = readFloat();
+              legacyMaterial->velvet.z    = readFloat();
+
+              legacyMaterial->velvetScale = readFloat();
+            }
+
+            if(version>5)
+            {
+              legacyMaterial->heightScale    = readFloat();
+              legacyMaterial->heightMidlevel = readFloat();
+            }
+          }
+
+          openGLMaterial->useAmbient     = readFloat();
+          openGLMaterial->useDiffuse     = readFloat();
+          openGLMaterial->useNdotL       = readFloat();
+          openGLMaterial->useAttenuation = readFloat();
+          openGLMaterial->useShadow      = readFloat();
+          openGLMaterial->useLightMask   = readFloat();
+          openGLMaterial->useReflection  = readFloat();
+        }
+
+
+        if(version>0)
+        {
+          if(version<3)
+            readFloat();
+
+          openGLMaterial->albedoScale   = readFloat();
+          if(version<6)
+            readFloat(); //specularScale
+        }
+
+        if(version>1)
+        {
+          openGLMaterial->tileTextures = readInt();
+
+          if(version>12)
+          {
+            mesh.material.uvTransformation.skewUV.x      = readFloat();
+            mesh.material.uvTransformation.skewUV.y      = readFloat();
+            mesh.material.uvTransformation.scaleUV.x     = readFloat();
+            mesh.material.uvTransformation.scaleUV.y     = readFloat();
+            mesh.material.uvTransformation.translateUV.x = readFloat();
+            mesh.material.uvTransformation.translateUV.y = readFloat();
+            mesh.material.uvTransformation.rotateUV      = readFloat();
+
+            if(version>13)
+            {
+              legacyMaterial->rayVisibilityCamera       = readInt();
+              legacyMaterial->rayVisibilityDiffuse      = readInt();
+              legacyMaterial->rayVisibilityGlossy       = readInt();
+              legacyMaterial->rayVisibilityTransmission = readInt();
+              legacyMaterial->rayVisibilityScatter      = readInt();
+              legacyMaterial->rayVisibilityShadow       = readInt();
+
+              if(version>14)
+                openGLMaterial->rayVisibilityShadowCatcher = readInt();
+            }
           }
         }
-      }
 
-      if(version<3)
-        readString();
+        if(version<3)
+          readString();
 
-      mesh.material.albedoTexture  = readString();
-      if(version<6)
-        readString(); //specularTexture
-      mesh.material.alphaTexture    = readString();
-      mesh.material.normalsTexture  = readString();
-
-      if(version>2)
-      {
-        mesh.material.roughnessTexture = readString();
-        mesh.material.metalnessTexture = readString();
+        openGLMaterial->albedoTexture  = readString();
         if(version<6)
-          readString(); //aoTexture
-        else
+          readString(); //specularTexture
+        openGLMaterial->alphaTexture    = readString();
+        openGLMaterial->normalsTexture  = readString();
+
+        if(version>2)
         {
-          mesh.material.emissionTexture = readString();
-          mesh.material.     sssTexture = readString();
-          mesh.material.  heightTexture = readString();
-          if(version>6)
+          openGLMaterial->roughnessTexture = readString();
+          openGLMaterial->metalnessTexture = readString();
+          if(version<6)
+            readString(); //aoTexture
+          else
           {
-            mesh.material.         transmissionTexture = readString();
-            mesh.material.transmissionRoughnessTexture = readString();
-            mesh.material.                sheenTexture = readString();
-            mesh.material.            sheenTintTexture = readString();
-            mesh.material.            clearCoatTexture = readString();
-            mesh.material.   clearCoatRoughnessTexture = readString();
-            mesh.material.               velvetTexture = readString();
-            mesh.material.         velvetFactorTexture = readString();
-
-            if(version>8)
+            legacyMaterial->emissionTexture = readString();
+            legacyMaterial->     sssTexture = readString();
+            legacyMaterial->  heightTexture = readString();
+            if(version>6)
             {
-              mesh.material.           sssScaleTexture = readString();
-              mesh.material.   iridescentFactorTexture = readString();
-              mesh.material.   iridescentOffsetTexture = readString();
-              mesh.material.iridescentFrequencyTexture = readString();
+              openGLMaterial->         transmissionTexture = readString();
+              openGLMaterial->transmissionRoughnessTexture = readString();
+              legacyMaterial->                sheenTexture = readString();
+              legacyMaterial->            sheenTintTexture = readString();
+              legacyMaterial->            clearCoatTexture = readString();
+              legacyMaterial->   clearCoatRoughnessTexture = readString();
+              legacyMaterial->               velvetTexture = readString();
+              legacyMaterial->         velvetFactorTexture = readString();
 
-              if(version>10)
+              if(version>8)
               {
-                mesh.material.         specularTexture = readString();
+                legacyMaterial->           sssScaleTexture = readString();
+                legacyMaterial->   iridescentFactorTexture = readString();
+                legacyMaterial->   iridescentOffsetTexture = readString();
+                legacyMaterial->iridescentFrequencyTexture = readString();
 
-                if(version>18)
+                if(version>10)
                 {
-                  mesh.material.           rgbaTexture = readString();
-                  mesh.material.          rmttrTexture = readString();
+                  legacyMaterial->         specularTexture = readString();
+
+                  if(version>18)
+                  {
+                    openGLMaterial->           rgbaTexture = readString();
+                    openGLMaterial->          rmttrTexture = readString();
+                  }
                 }
               }
             }
           }
         }
+      }
+      else
+      {
+        // Version 20+
+        mesh.material.loadState(tp_utils::jsonFromString(readString()));
+
+        mesh.material.uvTransformation.skewUV.x      = readFloat();
+        mesh.material.uvTransformation.skewUV.y      = readFloat();
+        mesh.material.uvTransformation.scaleUV.x     = readFloat();
+        mesh.material.uvTransformation.scaleUV.y     = readFloat();
+        mesh.material.uvTransformation.translateUV.x = readFloat();
+        mesh.material.uvTransformation.translateUV.y = readFloat();
+        mesh.material.uvTransformation.rotateUV      = readFloat();
       }
     }
 
