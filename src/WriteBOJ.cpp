@@ -8,9 +8,10 @@ namespace tp_boj
 {
 
 //##################################################################################################
-void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
+void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
-                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture)
+                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
+                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveBlendFile)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
@@ -18,14 +19,20 @@ void writeObjectAndTexturesToFile(const std::vector<tp_math_utils::Geometry3D>& 
   {
     if(name.isValid())
       saveTexture(name, directory + cleanTextureName(name) + ".png");
+  },
+  [&](const tp_utils::StringID& blendFileName)
+  {
+    if(blendFileName.isValid())
+      saveBlendFile(blendFileName, directory + cleanTextureName(blendFileName) + ".blend");
   });
   tp_utils::writeBinaryFile(filePath, objectData);
 }
 
 //##################################################################################################
-void writeObjectAndTexturesToData(const std::vector<tp_math_utils::Geometry3D>& object,
+void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
+                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveBlendFile,
                                   const std::function<void(const std::string& path, const std::string& data, bool binary)>& saveFile)
 {
   std::string directory = getAssociatedFilePath(filePath);
@@ -34,13 +41,19 @@ void writeObjectAndTexturesToData(const std::vector<tp_math_utils::Geometry3D>& 
   {
     if(name.isValid())
       saveTexture(name, directory + cleanTextureName(name) + ".png");
+  },
+  [&](const tp_utils::StringID& blendFileName)
+  {
+    if(blendFileName.isValid())
+      saveBlendFile(blendFileName, directory + cleanTextureName(blendFileName) + ".blend");
   });
   saveFile(filePath, objectData, true);
 }
 
 //##################################################################################################
 std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
-                            const std::function<void(const tp_utils::StringID&)>& saveTexture)
+                            const std::function<void(const tp_utils::StringID&)>& saveTexture,
+                            const std::function<void(const tp_utils::StringID&)>& saveBlendFile)
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
@@ -151,12 +164,20 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
   }
 
   std::unordered_set<tp_utils::StringID> textures;
+  std::unordered_set<tp_utils::StringID> blendFiles;
   for(const auto& mesh : object)
+  {
     mesh.material.allTextureIDs(textures);
+    mesh.material.appendBlendFileIDs(blendFiles);
+  }
 
   for(const auto& texture : textures)
     if(texture.isValid())
       saveTexture(texture);
+  
+  for(const auto& blendFile : blendFiles)
+    if(blendFile.isValid())
+      saveBlendFile(blendFile);
 
   return result;
 }
