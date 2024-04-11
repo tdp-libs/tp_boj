@@ -11,7 +11,7 @@ namespace tp_boj
 void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
-                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveBlendFile)
+                                  const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
@@ -20,10 +20,10 @@ void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>&
     if(name.isValid())
       saveTexture(name, directory + cleanTextureName(name) + ".png");
   },
-  [&](const tp_utils::StringID& blendFileName)
+  [&](const tp_utils::StringID& type, const tp_utils::StringID& name)
   {
-    if(blendFileName.isValid())
-      saveBlendFile(blendFileName, directory + cleanTextureName(blendFileName) + ".blend");
+    if(type.isValid() && name.isValid())
+      saveExternalFile(type, name, directory + cleanTextureName(name));
   });
   tp_utils::writeBinaryFile(filePath, objectData);
 }
@@ -32,7 +32,7 @@ void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>&
 void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>& object,
                                   const std::string& filePath,
                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
-                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveBlendFile,
+                                  const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile,
                                   const std::function<void(const std::string& path, const std::string& data, bool binary)>& saveFile)
 {
   std::string directory = getAssociatedFilePath(filePath);
@@ -42,10 +42,10 @@ void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>&
     if(name.isValid())
       saveTexture(name, directory + cleanTextureName(name) + ".png");
   },
-  [&](const tp_utils::StringID& blendFileName)
+  [&](const tp_utils::StringID& type, const tp_utils::StringID& name)
   {
-    if(blendFileName.isValid())
-      saveBlendFile(blendFileName, directory + cleanTextureName(blendFileName) + ".blend");
+    if(type.isValid() && name.isValid())
+      saveExternalFile(type, name, directory + cleanTextureName(name));
   });
   saveFile(filePath, objectData, true);
 }
@@ -53,7 +53,7 @@ void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>&
 //##################################################################################################
 std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
                             const std::function<void(const tp_utils::StringID&)>& saveTexture,
-                            const std::function<void(const tp_utils::StringID&)>& saveBlendFile)
+                            const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&)>& saveExternalFile)
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
@@ -164,20 +164,20 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
   }
 
   std::unordered_set<tp_utils::StringID> textures;
-  std::unordered_set<tp_utils::StringID> blendFiles;
+  std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>> files;
   for(const auto& mesh : object)
   {
     mesh.material.allTextureIDs(textures);
-    mesh.material.appendBlendFileIDs(blendFiles);
+    mesh.material.appendFileIDs(files);
   }
 
   for(const auto& texture : textures)
     if(texture.isValid())
       saveTexture(texture);
   
-  for(const auto& blendFile : blendFiles)
-    if(blendFile.isValid())
-      saveBlendFile(blendFile);
+  for(const auto& file : files)
+    if(file.first.isValid() && file.second.isValid())
+      saveExternalFile(file.first, file.second);
 
   return result;
 }
