@@ -15,7 +15,8 @@ namespace tp_boj
 
 //##################################################################################################
 std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::string& filePath,
-                                                                     std::unordered_map<tp_utils::StringID, std::string>& texturePaths)
+                                                                     std::unordered_map<tp_utils::StringID, std::string>& texturePaths,
+                                                                     const tp_math_utils::ExtractTextureIDs& extractTextureIDs)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
@@ -24,7 +25,7 @@ std::vector<tp_math_utils::Geometry3D> readObjectAndTexturesFromFile(const std::
 
   std::unordered_set<tp_utils::StringID> textures;
   for(const auto& mesh : geometry)
-    mesh.material.allTextureIDs(textures);
+    mesh.material.allTextureIDs(textures, extractTextureIDs);
 
   for(const auto& name : textures)
     texturePaths[name] = directory + name.toString() + ".png";

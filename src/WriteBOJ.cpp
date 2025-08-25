@@ -9,9 +9,10 @@ namespace tp_boj
 
 //##################################################################################################
 void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>& object,
-                                  const std::string& filePath,
-                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
-                                  const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile)
+                                   const std::string& filePath,
+                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
+                                   const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile,
+                                   const tp_math_utils::ExtractTextureIDs& extractTextureIDs)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
@@ -24,16 +25,18 @@ void writeObjectAndResourcesToFile(const std::vector<tp_math_utils::Geometry3D>&
   {
     if(type.isValid() && name.isValid())
       saveExternalFile(type, name, directory + cleanTextureName(name));
-  });
+  },
+  extractTextureIDs);
   tp_utils::writeBinaryFile(filePath, objectData);
 }
 
 //##################################################################################################
 void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>& object,
-                                  const std::string& filePath,
-                                  const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
-                                  const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile,
-                                  const std::function<void(const std::string& path, const std::string& data, bool binary)>& saveFile)
+                                   const std::string& filePath,
+                                   const std::function<void(const tp_utils::StringID&, const std::string&)>& saveTexture,
+                                   const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&, const std::string&)>& saveExternalFile,
+                                   const std::function<void(const std::string& path, const std::string& data, bool binary)>& saveFile,
+                                   const tp_math_utils::ExtractTextureIDs& extractTextureIDs)
 {
   std::string directory = getAssociatedFilePath(filePath);
 
@@ -46,14 +49,16 @@ void writeObjectAndResourcesToData(const std::vector<tp_math_utils::Geometry3D>&
   {
     if(type.isValid() && name.isValid())
       saveExternalFile(type, name, directory + cleanTextureName(name));
-  });
+  },
+  extractTextureIDs);
   saveFile(filePath, objectData, true);
 }
 
 //##################################################################################################
 std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object,
                             const std::function<void(const tp_utils::StringID&)>& saveTexture,
-                            const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&)>& saveExternalFile)
+                            const std::function<void(const tp_utils::StringID&, const tp_utils::StringID&)>& saveExternalFile,
+                            const tp_math_utils::ExtractTextureIDs& extractTextureIDs)
 {
   auto run = [&object](const auto& addInt, const auto& addFloat, const auto& addString)
   {
@@ -167,7 +172,7 @@ std::string serializeObject(const std::vector<tp_math_utils::Geometry3D>& object
   std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>> files;
   for(const auto& mesh : object)
   {
-    mesh.material.allTextureIDs(textures);
+    mesh.material.allTextureIDs(textures, extractTextureIDs);
     mesh.material.appendFileIDs(files);
   }
 
